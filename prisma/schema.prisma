@@ -77,7 +77,7 @@ model aluno {
   datacriacao     DateTime @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime @default(now()) @db.Timestamp(0)
   usuario         usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_aluno_usuario")
-  turma_aluno     turma_aluno[]
+  disciplina_aluno     disciplina_aluno[]
 
   @@index([usuario_id], map: "fk_aluno_usuario")
 
@@ -89,11 +89,11 @@ model disciplina_aluno {
   disciplina_id   Int
   datacriacao     DateTime @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime @default(now()) @db.Timestamp(0)
-  aluno           aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade, map: "fk_turma_aluno_aluno")
-  turma           turma    @relation(fields: [turma_id], references: [id], onDelete: Cascade, map: "fk_turma_aluno_turma")
+  aluno           aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_aluno")
+  disciplina           disciplina    @relation(fields: [disciplina_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_disciplina")
 
-  @@index([aluno_id], map: "fk_turma_aluno_aluno")
-  @@index([disciplina_id], map: "fk_turma_aluno_turma")
+  @@index([aluno_id], map: "fk_disciplina_aluno_aluno")
+  @@index([disciplina_id], map: "fk_disciplina_aluno_disciplina")
 }
 
 model disciplina {
@@ -104,7 +104,7 @@ model disciplina {
   datacriacao     DateTime  @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime  @default(now()) @db.Timestamp(0)
   professor       professor @relation(fields: [professor_id], references: [id], onDelete: Cascade, map: "fk_turma_professor")
-  turma_aluno     disciplina_aluno[]
+  disciplina_aluno     disciplina_aluno[]
 
   @@index([professor_id], map: "fk_turma_professor")
 }
@@ -112,10 +112,7 @@ model disciplina {
 model turma {
   id              Int       @id @default(autoincrement())
   nome            String    @db.VarChar(255)
-  materia         String    @db.VarChar(255)
-  dia_semana      String    @db.VarChar(255)
   curso_id        Int
-  professor_id    Int
   datacriacao     DateTime  @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime  @default(now()) @db.Timestamp(0)
   curso           curso     @relation(fields: [curso_id], references: [id], onDelete: Cascade, map: "fk_turma_curso")
