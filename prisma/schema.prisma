@@ -27,6 +27,7 @@ model curso {
   datacriacao     DateTime    @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime    @default(now()) @db.Timestamp(0)
   turma           turma[]
+  disciplina           disciplina[]
   
   universidade    universidade? @relation(fields: [universidade_id], references: [id], onDelete: Cascade, map: "fk_curso_universidade")
   @@index([universidade_id], map: "fk_curso_universidade")
@@ -65,7 +66,7 @@ model professor {
   datacriacao     DateTime @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime @default(now()) @db.Timestamp(0)
   usuario         usuario  @relation(fields: [usuario_id], references: [id], onDelete: Cascade, map: "fk_professor_usuario")
-  turma           turma[]
+  disciplina           disciplina[]
 
   @@index([usuario_id], map: "fk_professor_usuario")
 
@@ -83,30 +84,33 @@ model aluno {
 
 }
 
+model disciplina {
+  id              Int       @id @default(autoincrement())
+  nome            String    @db.VarChar(255)
+  dia_semana      String    @db.VarChar(255)
+  curso_id        Int
+  professor_id    Int
+  datacriacao     DateTime  @default(now()) @db.Timestamp(0)
+  dataatualizacao DateTime  @default(now()) @db.Timestamp(0)
+  curso           curso     @relation(fields: [curso_id], references: [id], onDelete: Cascade, map: "fk_disciplina_curso")
+  professor       professor @relation(fields: [professor_id], references: [id], onDelete: Cascade, map: "fk_disciplina_professor")
+  disciplina_aluno     disciplina_aluno[]
+
+  @@index([curso_id], map: "fk_disciplina_curso")
+  @@index([professor_id], map: "fk_disciplina_professor")
+}
+
 model disciplina_aluno {
   id              Int      @id @default(autoincrement())
   aluno_id        Int
   disciplina_id   Int
   datacriacao     DateTime @default(now()) @db.Timestamp(0)
   dataatualizacao DateTime @default(now()) @db.Timestamp(0)
-  aluno           aluno    @relation(fields: [aluno_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_aluno")
-  disciplina           disciplina    @relation(fields: [disciplina_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_disciplina")
+  aluno                aluno @relation(fields: [aluno_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_aluno")
+  disciplina           disciplina @relation(fields: [disciplina_id], references: [id], onDelete: Cascade, map: "fk_disciplina_aluno_disciplina")
 
   @@index([aluno_id], map: "fk_disciplina_aluno_aluno")
-  @@index([disciplina_id], map: "fk_disciplina_aluno_disciplina")
-}
-
-model disciplina {
-  id              Int       @id @default(autoincrement())
-  nome            String    @db.VarChar(255)
-  dia_semana      String    @db.VarChar(255)
-  professor_id    Int
-  datacriacao     DateTime  @default(now()) @db.Timestamp(0)
-  dataatualizacao DateTime  @default(now()) @db.Timestamp(0)
-  professor       professor @relation(fields: [professor_id], references: [id], onDelete: Cascade, map: "fk_turma_professor")
-  disciplina_aluno     disciplina_aluno[]
-
-  @@index([professor_id], map: "fk_turma_professor")
+  @@index([disciplina_id], map: "fk_disciplina_aluno_curso")
 }
 
 model turma {
@@ -119,4 +123,3 @@ model turma {
  
   @@index([curso_id], map: "fk_turma_curso")
 }
-
